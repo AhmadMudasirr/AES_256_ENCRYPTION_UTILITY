@@ -1,26 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace First_Application.DataEncryption
 {
-    class DataEncrypt
+    public class DataEncrypt
     {
-        static string key = " "; //////// Enter Your 256 bit key here...
-        private static readonly byte[] ProcessKey = Convert.FromBase64String(key);
-
+        public static byte[] ProcessKey;
         private static byte[] ProcessIV = new byte[16];
 
 
         public void GenerateKeys()
         {
             var rng = new RNGCryptoServiceProvider();
-            // rng.GetBytes(ProcessKey);
-            // Debug.WriteLine(ProcessKey);
+
             rng.GetBytes(ProcessIV);
         }
 
@@ -62,10 +55,6 @@ namespace First_Application.DataEncryption
         }
 
 
-
-
-
-
         public static string Decrypt(byte[] cipherText)
         {
             using (Aes aes = Aes.Create())
@@ -94,8 +83,6 @@ namespace First_Application.DataEncryption
                 }
             }
         }
-
-
 
     }
 }

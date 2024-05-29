@@ -1,5 +1,4 @@
 ﻿using First_Application.DataEncryption;
-using Newtonsoft.Json;
 using System;
 using System.Windows.Forms;
 
@@ -13,13 +12,37 @@ namespace First_Application
             InitializeComponent();
         }
 
+        private void SubmitKey_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(encryptionKeyValue.Text))
+            {
+
+                MessageBox.Show("Please Enter Your Key To Proceed Further");
+            }
+            else if (IsBase64String(encryptionKeyValue.Text))
+            {
+
+                string key = encryptionKeyValue.Text.Trim();
+                byte[] keybyte = Convert.FromBase64String(key);
+                DataEncrypt.ProcessKey = keybyte;
+                MessageBox.Show("Key Sumbitted Successfully. Please Proceed with Encryption OR Decryption");
+                encryptionKeyValue.Clear();
+            }
+            else
+            {
+
+                MessageBox.Show("Enter Valid Base64 key");
+
+            }
+
+        }
 
         private void EncryptData_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(MainJsonData.Text))
+            if (DataEncrypt.ProcessKey == null || string.IsNullOrEmpty(MainJsonData.Text))
             {
 
-                MessageBox.Show("Please Enter Value in Json Format !");
+                MessageBox.Show("Please Enter Valid Encryption Key and Json Data in Format!");
             }
 
             else
@@ -53,35 +76,6 @@ namespace First_Application
 
         }
 
-
-        private void DeserializeData_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(DecryptedJsonValue.Text))
-            {
-
-                MessageBox.Show("Please Complete the above steps to Proceed! ");
-
-            }
-
-            else
-            {
-
-                Template deserializesJson = JsonConvert.DeserializeObject<Template>(DecryptedJsonValue.Text);
-
-                var tempObj = new
-                {
-                    Title = deserializesJson.Title,
-                    Genre = deserializesJson.Genre,
-                    Price = deserializesJson.Price,
-                    Description = deserializesJson.Description,
-                    AuthorId = deserializesJson.AuthorId
-                };
-
-
-                MessageBox.Show(Convert.ToString(tempObj));
-            }
-        }
-
         private void CopyEncryptedValue_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(EncryptedJsonValue.Text))
@@ -99,16 +93,19 @@ namespace First_Application
         }
 
 
+        private bool IsBase64String(string base64String)
+        {
+            try
+            {
+                byte[] data = Convert.FromBase64String(base64String);
+                return (base64String.Replace(" ", "").Length % 4 == 0);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
     }
 
-
-
-    public class Template
-    {
-        public string Title { get; set; }
-        public string Genre { get; set; }
-        public decimal Price { get; set; }
-        public string Description { get; set; }
-        public int AuthorId { get; set; }
-    }
 }
